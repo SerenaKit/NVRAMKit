@@ -23,7 +23,7 @@ for variable in variablesToSet {
     let variableName = components[0]
     let variableValue = components[1]
     do {
-        try nvram.createOrSetOFVariable(variableName: variableName, variableValue: variableValue)
+        try nvram.createOrSetOFVariable(variableName: variableName, variableValue: variableValue, forceSyncVariable: shouldForceSync)
     } catch {
         print(error.localizedDescription)
     }

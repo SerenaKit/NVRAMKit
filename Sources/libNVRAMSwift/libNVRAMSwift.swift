@@ -53,7 +53,7 @@ public struct NVRAM {
     }
     
     /// Create or set a specified NVRAM Variable to a specified value
-    public func createOrSetOFVariable(variableName name:String, variableValue value:Any, syncVariable:Bool = true) throws {
+    public func createOrSetOFVariable(variableName name:String, variableValue value:Any, syncVariable:Bool = true, forceSyncVariable:Bool = false) throws {
         let entry = getIOEntryReg()
         defer { IOObjectRelease(entry) }
         
@@ -65,7 +65,9 @@ public struct NVRAM {
         
         // Sync the variable
         if syncVariable {
-            IORegistryEntrySetCFProperty(entry, kIONVRAMSyncNowPropertyKey as CFString, name as CFTypeRef)
+            // If forceSync is set to true, use the force sync property key rather than the normal one
+            let syncPropertyKey = forceSyncVariable ? "IONVRAM-FORCESYNCNOW-PROPERTY" : kIONVRAMSyncNowPropertyKey
+            IORegistryEntrySetCFProperty(entry, syncPropertyKey as CFString, name as CFTypeRef)
         }
         
     }

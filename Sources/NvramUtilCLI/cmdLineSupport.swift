@@ -14,8 +14,10 @@ func parseCMDLineArgument(longOpt:String, shortOpt:String? = nil, fromArgArr Arg
     return CMDLineArgs[index + 1]
 }
 
+let shouldForceSync = CMDLineArgs.contains("--force-sync") || CMDLineArgs.contains("-f")
+
 let helpMessage = """
-NVRAMUtil - By Serena-io
+NVRAMUtil - By NSSerena
 A CommandLine tool to demonstrate libNVRAMSwift
 Usage: nvramutil <option> [NVRAM Variable..]
 
@@ -23,7 +25,8 @@ Options:
     -a, --all                                       Print all NVRAM Variables
     -p, --print  VARIABLE-TO-PRINT                  Print a specicifed NVRAM Variable
     -d, --delete VARIABLE-TO-DELETE                 Specify a NVRAM Variable to delete
+    -f, --force-sync                                Force Sync NVRAM Variables that are set
 
 For setting an NVRAM Variable to a specific value:
-VARIABLE-NAME=VARIABLE-VALUE. Example: nvramutil example=value1
+VARIABLE-NAME=VARIABLE-VALUE. Example: `nvramutil example=value1`
 """
