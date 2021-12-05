@@ -43,12 +43,12 @@ for arg in CMDLineArgs {
             print(error.localizedDescription)
         }
     case "--all", "-a":
-        if let dict = nvram.getAllOFVariables(convertOFVariablesValue: !shouldPrintRawValues) {
-            for (key, value) in dict {
-                print("\(key): \(value ?? "Unknown Value")")
-            }
-        } else {
-            fatalError("Couldn't get All NVRAM Variables. Sorry.")
+        // Get the dict of all NVRAM Variables, and specify the values to be raw if the user used --raw/-r
+        guard let dict = nvram.getAllOFVariables(convertOFVariablesValue: !shouldPrintRawValues) else {
+            fatalError("Couldn't get all NVRAM Variables. Sorry")
+        }
+        for (key, value) in dict {
+            print("\(key): \(value ?? "Unknown Value")")
         }
     default:
         break
