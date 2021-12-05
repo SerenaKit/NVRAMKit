@@ -50,17 +50,15 @@ for arg in CMDLineArgs {
         for (key, value) in dict {
             print("\(key): \(value ?? "Unknown Value")")
         }
+    case "--print", "-p":
+        let variableToPrint = parseCMDLineArgument(longOpt: "--print", shortOpt: "-p", description: "NVRAM Variable to print")
+        do {
+            let value = try nvram.OFVariableValue(variableName: variableToPrint, convertOFVariableValue: !shouldPrintRawValues)
+            print("\(variableToPrint): \(value)")
+        } catch {
+            print(error.localizedDescription)
+        }
     default:
         break
-    }
-}
-
-if CMDLineArgs.contains("--print") || CMDLineArgs.contains("-p") {
-    let variableToPrint = parseCMDLineArgument(longOpt: "--print", shortOpt: "-p", description: "NVRAM Variable to print")
-    do {
-        let value = try nvram.OFVariableValue(variableName: variableToPrint, convertOFVariableValue: !shouldPrintRawValues)
-        print("\(variableToPrint): \(value)")
-    } catch {
-        print(error.localizedDescription)
     }
 }
