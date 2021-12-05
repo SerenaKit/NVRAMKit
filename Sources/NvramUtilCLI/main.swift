@@ -29,24 +29,29 @@ for variable in variablesToSet {
     }
 }
 
-if CMDLineArgs.contains("--delete") || CMDLineArgs.contains("-d") {
-    let variableToDelete = parseCMDLineArgument(longOpt: "--delete", shortOpt: "-d", description: "NVRAM Variable to delete")
-    if !nvram.OFVariableExists(variableName: variableToDelete) {
-        print("NVRAM Variable \(variableToDelete) doesn't exist..still proceeding to (try) deleting.")
-    }
-    do {
-        try nvram.deleteOFVariable(variableName: variableToDelete)
-        print("Deleted NVRAM variable \(variableToDelete)")
-    } catch {
-        print(error.localizedDescription)
-    }
-}
-
-if CMDLineArgs.contains("--all") || CMDLineArgs.contains("-a") {
-    if let dict = nvram.getAllOFVariables(convertOFVariablesValue: !shouldPrintRawValues) {
-        for (key, value) in dict {
-            print("\(key): \(value ?? "Unknown Value")")
+for arg in CMDLineArgs {
+    switch arg {
+    case "--delete", "-d":
+        let variableToDelete = parseCMDLineArgument(longOpt: "--delete", shortOpt: "-d", description: "NVRAM Variable to delete")
+        if !nvram.OFVariableExists(variableName: variableToDelete) {
+            print("NVRAM Variable \(variableToDelete) doesn't exist..still proceeding to (try) deleting.")
         }
+        do {
+            try nvram.deleteOFVariable(variableName: variableToDelete)
+            print("Deleted NVRAM variable \(variableToDelete)")
+        } catch {
+            print(error.localizedDescription)
+        }
+    case "--all", "-a":
+        if let dict = nvram.getAllOFVariables(convertOFVariablesValue: !shouldPrintRawValues) {
+            for (key, value) in dict {
+                print("\(key): \(value ?? "Unknown Value")")
+            }
+        } else {
+            fatalError("Couldn't get All NVRAM Variables. Sorry.")
+        }
+    default:
+        break
     }
 }
 

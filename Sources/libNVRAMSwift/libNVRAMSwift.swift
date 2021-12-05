@@ -87,7 +87,13 @@ public struct NVRAM {
         
         let dict = UnsafeMutablePointer<Unmanaged<CFMutableDictionary>?>.allocate(capacity: 1)
         defer { dict.deallocate() }
-        IORegistryEntryCreateCFProperties(entry, dict, kCFAllocatorDefault, 0)
+        
+        let status = IORegistryEntryCreateCFProperties(entry, dict, kCFAllocatorDefault, 0)
+        
+        // Make sure we got the dictionary successfully
+        guard status == KERN_SUCCESS else {
+            return nil
+        }
         
         // Dictionary of unconverted OF Variable values
         let rawDict = dict.pointee?.takeRetainedValue() as? Dictionary<String, Any>
