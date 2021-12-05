@@ -6,6 +6,11 @@ import Foundation
 import libNVRAMSwift
 #endif
 
+// Print the help message if the user used --help/-h or if no arguments were specified
+if CMDLineArgs.contains("--help") || CMDLineArgs.contains("-h") || CMDLineArgs.isEmpty {
+    print(helpMessage)
+    exit(0)
+}
 let nvram = NVRAM()
 
 
