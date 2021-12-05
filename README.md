@@ -58,7 +58,7 @@ print(variableExists)
 ```
 
 ### Getting all NVRAM Variables and their values
-Use `getAllOFVariables`. Example:
+Use `getAllOFVariables`, which returns a Dictionary of Variable names and values. Example:
 ```swift
 let nvram = NVRAM() 
 let allVariables = nvram.getAllOFVariables()
