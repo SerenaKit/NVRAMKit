@@ -14,12 +14,9 @@ use the `OFVariableValue` to get the value of an existing NVRAM Variable. Exampl
 ```swift
 let nvram = NVRAM()
 let nvramVariableName = "SystemAudioVolume"
-do {
-  // Returns the value of NVRAM variable "SystemAudioVolume"
-  let value = try nvram.OFVariableValue(variableName: nvramVariableName)
-} catch {
-  print(error.localizedDescription)
-}
+// Returns the value of NVRAM variable "SystemAudioVolume"
+let value = try nvram.OFVariableValue(variableName: nvramVariableName)
+print(value ?? "Unknown Value")
 ```
 
 ### Creating / Setting variables of NVRAM Variables
