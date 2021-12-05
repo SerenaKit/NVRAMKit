@@ -15,7 +15,7 @@ use the `OFVariableValue` to get the value of an existing NVRAM Variable. Exampl
 let nvram = NVRAM()
 let nvramVariableName = "SystemAudioVolume"
 // Returns the value of NVRAM variable "SystemAudioVolume"
-let value = try nvram.OFVariableValue(variableName: nvramVariableName)
+let value = nvram.OFVariableValue(variableName: nvramVariableName)
 print(value ?? "Unknown Value")
 ```
 
