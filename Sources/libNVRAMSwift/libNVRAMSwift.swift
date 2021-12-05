@@ -38,22 +38,18 @@ public struct NVRAM {
     }
     
     /// Returns the value of an NVRAM Variable
-    public func OFVariableValue(variableName name:String, convertOFVariableValue:Bool = true) throws -> Any {
+    public func OFVariableValue(variableName name:String) -> String? {
         let entry = getIOEntryReg()
         defer { IOObjectRelease(entry) }
+        
         guard OFVariableExists(variableName: name) else {
-            throw libNVRAMErrors.variableDoesntExist(variableName: name)
+            return nil
         }
+     
         let ref = IORegistryEntryCreateCFProperty(entry, name as CFString, kCFAllocatorDefault, 0).takeRetainedValue()
         
-        if convertOFVariableValue {
-            guard let converted = convertValueToString(ref) else {
-                throw libNVRAMErrors.couldntConvertOFVariableValue(variableName: name, variableRawValue: ref)
-            }
-            return converted
-        }
-        
-        return ref
+        let converted = convertValueToString(ref)
+        return converted
     }
     
     /// Create or set a specified NVRAM Variable to a specified value
@@ -81,7 +77,7 @@ public struct NVRAM {
     }
     
     /// Returns a dictionary of all OF Variable names and values
-    public func getAllOFVariables(convertOFVariablesValue: Bool = true) -> [String:Any?]? {
+    public func getAllOFVariables() -> [String:String?]? {
         let entry = getIOEntryReg()
         defer { IOObjectRelease(entry) }
         
@@ -101,10 +97,7 @@ public struct NVRAM {
         // Dictionary of converted OF Variable values
         let convertedDict = rawDict?.mapValues() { return convertValueToString($0) }
         
-        if convertOFVariablesValue {
-            return convertedDict
-        }
-        return rawDict
+        return convertedDict
     }
     
     public init() {}
@@ -112,8 +105,6 @@ public struct NVRAM {
 
 /// Errors that could be encountered with NVRAM Functions
  enum libNVRAMErrors:LocalizedError {
-    case variableDoesntExist(variableName:String)
-    case couldntConvertOFVariableValue(variableName:String, variableRawValue:Any?)
     case couldntSetOFVariableValue(variableName:String, variableValueGiven:Any, errorEncountered:String)
 }
 
@@ -121,10 +112,6 @@ public struct NVRAM {
 extension libNVRAMErrors {
     public var errorDescription: String? {
         switch self {
-        case let .variableDoesntExist(variableName):
-            return "NVRAM Variable by the name of \(variableName) doesn't exist."
-        case let .couldntConvertOFVariableValue(variableName, variableRawValue):
-            return "Couldn't convert value of NVRAM Variable \(variableName) to string. Raw Value: \(variableRawValue ?? "Unknown")"
         case let .couldntSetOFVariableValue(variableName, variableValueGiven, errorEncountered):
             return "Couldn't Set / Create NVRAM Variable of name \(variableName) to value \(variableValueGiven), error encountered: \(errorEncountered)"
         }

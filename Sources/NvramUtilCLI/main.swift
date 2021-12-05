@@ -44,7 +44,7 @@ for arg in CMDLineArgs {
         }
     case "--all", "-a":
         // Get the dict of all NVRAM Variables, and specify the values to be raw if the user used --raw/-r
-        guard let dict = nvram.getAllOFVariables(convertOFVariablesValue: !shouldPrintRawValues) else {
+        guard let dict = nvram.getAllOFVariables() else {
             fatalError("Couldn't get all NVRAM Variables. Sorry")
         }
         for (key, value) in dict {
@@ -52,12 +52,8 @@ for arg in CMDLineArgs {
         }
     case "--print", "-p":
         let variableToPrint = parseCMDLineArgument(longOpt: "--print", shortOpt: "-p", description: "NVRAM Variable to print")
-        do {
-            let value = try nvram.OFVariableValue(variableName: variableToPrint, convertOFVariableValue: !shouldPrintRawValues)
-            print("\(variableToPrint): \(value)")
-        } catch {
-            print(error.localizedDescription)
-        }
+        let variableValue = nvram.OFVariableValue(variableName: variableToPrint)
+        print("\(variableToPrint): \(variableValue ?? "Unknown Value")")
     default:
         break
     }
