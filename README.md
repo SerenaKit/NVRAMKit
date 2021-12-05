@@ -56,3 +56,13 @@ let nvram = NVRAM()
 let variableExists = nvram.OFVariableExists(variableName: "SystemAudioVolume")
 print(variableExists)
 ```
+
+### Getting all NVRAM Variables and their values
+Use `getAllOFVariables`. Example:
+```swift
+let nvram = NVRAM() 
+let allVariables = nvram.getAllOFVariables()
+for (key, value) in allVariables {
+  print("\(key): \(value ?? "Unknown Value")")
+}
+```
