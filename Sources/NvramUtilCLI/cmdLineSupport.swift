@@ -26,10 +26,10 @@ Options:
     -a, --all                                       Print all NVRAM Variables and their values
     -l --list                                       List all NVRAM Variables without their values
     -f, --force-sync                                Force Sync NVRAM Variables that are set by NVRAMUtil
+    -n, --no-sync                                   Don't sync a NVRAM Variable if the user specifies to set one
     -p, --print  VARIABLE-TO-PRINT                  Print a specicifed NVRAM Variable
     -d, --delete VARIABLE-TO-DELETE                 Specify a NVRAM Variable to delete
     -s, --sync   VARIABLE-TO-SYNC                   Sync a specified Variable
-    -n, --no-sync                                   Don't sync a NVRAM Variable if the user specifies to set one
 
 For setting an NVRAM Variable to a specific value:
 VARIABLE-NAME=VARIABLE-VALUE. Example: `nvramutil example=value1`
