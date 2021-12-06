@@ -24,7 +24,9 @@ for variable in variablesToSet {
     let variableValue = components[1]
     do {
         try nvram.createOrSetOFVariable(variableName: variableName, variableValue: variableValue)
-        try nvram.syncOFVariable(variableName: variableName, forceSync: shouldForceSync)
+        if !shouldntSync {
+            try nvram.syncOFVariable(variableName: variableName, forceSync: shouldForceSync)
+        }
     } catch {
         print(error.localizedDescription)
     }

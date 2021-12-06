@@ -15,6 +15,7 @@ func parseCMDLineArgument(longOpt:String, shortOpt:String? = nil, fromArgArr Arg
 }
 
 let shouldForceSync = CMDLineArgs.contains("--force-sync") || CMDLineArgs.contains("-f")
+let shouldntSync = CMDLineArgs.contains("--no-sync") || CMDLineArgs.contains("-n")
 
 let helpMessage = """
 NVRAMUtil - By NSSerena
@@ -28,6 +29,7 @@ Options:
     -p, --print  VARIABLE-TO-PRINT                  Print a specicifed NVRAM Variable
     -d, --delete VARIABLE-TO-DELETE                 Specify a NVRAM Variable to delete
     -s, --sync   VARIABLE-TO-SYNC                   Sync a specified Variable
+    -n, --no-sync                                   Don't sync a NVRAM Variable if the user specifies to set one
 
 For setting an NVRAM Variable to a specific value:
 VARIABLE-NAME=VARIABLE-VALUE. Example: `nvramutil example=value1`
