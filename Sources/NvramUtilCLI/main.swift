@@ -23,7 +23,8 @@ for variable in variablesToSet {
     let variableName = components[0]
     let variableValue = components[1]
     do {
-        try nvram.createOrSetOFVariable(variableName: variableName, variableValue: variableValue, forceSyncVariable: shouldForceSync)
+        try nvram.createOrSetOFVariable(variableName: variableName, variableValue: variableValue)
+        try nvram.syncOFVariable(variableName: variableName, forceSync: shouldForceSync)
     } catch {
         print(error.localizedDescription)
     }
@@ -62,9 +63,8 @@ for arg in CMDLineArgs {
         print("\(variableToPrint): \(variableValue ?? "Unknown Value")")
     case "-s", "--sync":
         let variableToSync = parseCMDLineArgument(longOpt: "--sync", shortOpt: "-s", description: "NVRAM Variable to sync")
-        let syncFlag = shouldForceSync ? "IONVRAM-FORCESYNCNOW-PROPERTY" : kIONVRAMSyncNowPropertyKey
         do {
-            try nvram.createOrSetOFVariable(variableName: syncFlag, variableValue: variableToSync, syncVariable: false, forceSyncVariable: false)
+            try nvram.syncOFVariable(variableName: variableToSync, forceSync: shouldForceSync)
             print("Synced variable.")
         } catch {
             print(error.localizedDescription)

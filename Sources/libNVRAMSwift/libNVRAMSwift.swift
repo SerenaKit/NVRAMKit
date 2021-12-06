@@ -53,7 +53,7 @@ public struct NVRAM {
     }
     
     /// Create or set a specified NVRAM Variable to a specified value
-    public func createOrSetOFVariable(variableName name:String, variableValue value:Any, syncVariable:Bool = true, forceSyncVariable:Bool = false) throws {
+    public func createOrSetOFVariable(variableName name:String, variableValue value:Any) throws {
         let entry = getIOEntryReg()
         defer { IOObjectRelease(entry) }
         
@@ -62,14 +62,6 @@ public struct NVRAM {
             let errorEncountered = machErrorString(errorValue: setStatus)
             throw libNVRAMErrors.couldntSetOFVariableValue(variableName: name, variableValueGiven: value, errorEncountered: errorEncountered)
         }
-        
-        // Sync the variable
-        if syncVariable {
-            // If forceSync is set to true, use the force sync property key rather than the normal one
-            let syncPropertyKey = forceSyncVariable ? "IONVRAM-FORCESYNCNOW-PROPERTY" : kIONVRAMSyncNowPropertyKey
-            IORegistryEntrySetCFProperty(entry, syncPropertyKey as CFString, name as CFTypeRef)
-        }
-        
     }
     
     
@@ -78,6 +70,11 @@ public struct NVRAM {
         try createOrSetOFVariable(variableName: kIONVRAMDeletePropertyKey, variableValue: name)
     }
     
+    public func syncOFVariable(variableName name:String, forceSync:Bool) throws {
+        // If forceSync is true, use the force-sync-now key, otherwise use the normal one
+        let syncKey = forceSync ? "IONVRAM-FORCESYNCNOW-PROPERTY" : kIONVRAMSyncNowPropertyKey
+        try createOrSetOFVariable(variableName: syncKey, variableValue: name)
+    }
     /// Returns a dictionary of all OF Variable names and values
     public func getAllOFVariables() -> [String:String?]? {
         let entry = getIOEntryReg()
