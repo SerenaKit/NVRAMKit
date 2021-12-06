@@ -42,18 +42,33 @@ for arg in CMDLineArgs {
         } catch {
             print(error.localizedDescription)
         }
-    case "--all", "-a":
-        // Get the dict of all NVRAM Variables, and specify the values to be raw if the user used --raw/-r
+    case "--all","-a":
         guard let dict = nvram.getAllOFVariables() else {
             fatalError("Couldn't get all NVRAM Variables. Sorry")
         }
         for (key, value) in dict {
             print("\(key): \(value ?? "Unknown Value")")
         }
+    case "--list", "-l":
+        guard let dict = nvram.getAllOFVariables() else {
+            fatalError("Couldn't get all NVRAM Variables. Sorry")
+        }
+        for (key, _) in dict {
+            print(key)
+        }
     case "--print", "-p":
         let variableToPrint = parseCMDLineArgument(longOpt: "--print", shortOpt: "-p", description: "NVRAM Variable to print")
         let variableValue = nvram.OFVariableValue(variableName: variableToPrint)
         print("\(variableToPrint): \(variableValue ?? "Unknown Value")")
+    case "-s", "--sync":
+        let variableToSync = parseCMDLineArgument(longOpt: "--sync", shortOpt: "-s", description: "NVRAM Variable to sync")
+        let syncFlag = shouldForceSync ? "IONVRAM-FORCESYNCNOW-PROPERTY" : kIONVRAMSyncNowPropertyKey
+        do {
+            try nvram.createOrSetOFVariable(variableName: syncFlag, variableValue: variableToSync, syncVariable: false, forceSyncVariable: false)
+            print("Synced variable.")
+        } catch {
+            print(error.localizedDescription)
+        }
     default:
         break
     }

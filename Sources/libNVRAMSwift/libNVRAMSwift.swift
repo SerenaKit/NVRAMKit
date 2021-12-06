@@ -81,10 +81,11 @@ public struct NVRAM {
     /// Returns a dictionary of all OF Variable names and values
     public func getAllOFVariables() -> [String:String?]? {
         let entry = getIOEntryReg()
-        defer { IOObjectRelease(entry) }
-        
         let dict = UnsafeMutablePointer<Unmanaged<CFMutableDictionary>?>.allocate(capacity: 1)
-        defer { dict.deallocate() }
+        defer {
+            IOObjectRelease(entry)
+            dict.deallocate()
+        }
         
         let status = IORegistryEntryCreateCFProperties(entry, dict, kCFAllocatorDefault, 0)
         

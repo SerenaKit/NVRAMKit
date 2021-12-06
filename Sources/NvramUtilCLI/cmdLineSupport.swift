@@ -22,10 +22,12 @@ A CommandLine tool to demonstrate libNVRAMSwift
 Usage: nvramutil <option> [NVRAM Variable..]
 
 Options:
-    -a, --all                                       Print all NVRAM Variables
+    -a, --all                                       Print all NVRAM Variables and their values
+    -l --list                                       List all NVRAM Variables without their values
+    -f, --force-sync                                Force Sync NVRAM Variables that are set by NVRAMUtil
     -p, --print  VARIABLE-TO-PRINT                  Print a specicifed NVRAM Variable
     -d, --delete VARIABLE-TO-DELETE                 Specify a NVRAM Variable to delete
-    -f, --force-sync                                Force Sync NVRAM Variables that are set
+    -s, --sync   VARIABLE-TO-SYNC                   Sync a specified Variable
 
 For setting an NVRAM Variable to a specific value:
 VARIABLE-NAME=VARIABLE-VALUE. Example: `nvramutil example=value1`
