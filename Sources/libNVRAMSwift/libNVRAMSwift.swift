@@ -38,7 +38,7 @@ public struct NVRAM {
     }
     
     /// Returns the value of an NVRAM Variable
-    public func OFVariableValue(variableName name:String) -> String? {
+    public func OFVariableValue(variableName name: String) -> String? {
         let entry = getIOEntryReg()
         defer { IOObjectRelease(entry) }
         
@@ -53,7 +53,7 @@ public struct NVRAM {
     }
     
     /// Create or set a specified NVRAM Variable to a specified value
-    public func createOrSetOFVariable(variableName name:String, variableValue value:Any) throws {
+    public func createOrSetOFVariable(variableName name: String, variableValue value: String) throws {
         let entry = getIOEntryReg()
         defer { IOObjectRelease(entry) }
         
@@ -66,17 +66,17 @@ public struct NVRAM {
     
     
     /// Delete a specified NVRAM Variable
-    public func deleteOFVariable(variableName name:String) throws {
+    public func deleteOFVariable(variableName name: String) throws {
         try createOrSetOFVariable(variableName: kIONVRAMDeletePropertyKey, variableValue: name)
     }
     
-    public func syncOFVariable(variableName name:String, forceSync:Bool) throws {
+    public func syncOFVariable(variableName name: String, forceSync: Bool) throws {
         // If forceSync is true, use the force-sync-now key, otherwise use the normal one
         let syncKey = forceSync ? "IONVRAM-FORCESYNCNOW-PROPERTY" : kIONVRAMSyncNowPropertyKey
         try createOrSetOFVariable(variableName: syncKey, variableValue: name)
     }
     /// Returns a dictionary of all OF Variable names and values
-    public func getAllOFVariables() -> [String:String?]? {
+    public func getAllOFVariables() -> [String : String?]? {
         let entry = getIOEntryReg()
         let dict = UnsafeMutablePointer<Unmanaged<CFMutableDictionary>?>.allocate(capacity: 1)
         defer {
@@ -104,16 +104,13 @@ public struct NVRAM {
 }
 
 /// Errors that could be encountered with NVRAM Functions
- enum libNVRAMErrors:LocalizedError {
+ enum libNVRAMErrors:Error, CustomStringConvertible {
     case couldntSetOFVariableValue(variableName:String, variableValueGiven:Any, errorEncountered:String)
-}
-
-/// Error descriptions
-extension libNVRAMErrors {
-    public var errorDescription: String? {
-        switch self {
-        case let .couldntSetOFVariableValue(variableName, variableValueGiven, errorEncountered):
-            return "Couldn't Set / Create NVRAM Variable of name \(variableName) to value \(variableValueGiven), error encountered: \(errorEncountered)"
-        }
-    }
+     
+     var description: String {
+       switch self {
+       case .couldntSetOFVariableValue(let variableName, let variableValueGiven, let errorEncountered):
+         return "Couldn't Set Value of NVRAM Variable \"\(variableName)\" to value \(variableValueGiven), error: \(errorEncountered)"
+       }
+     }
 }
