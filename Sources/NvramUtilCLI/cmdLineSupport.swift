@@ -59,15 +59,7 @@ internal func convertToXML(fromDict Dict: [String : String]) -> String {
     let encoder = PropertyListEncoder()
     encoder.outputFormat = .xml
     
-    struct codableStruct: Codable {
-        var NVRAMDict: [String : String]
-        
-        init(NVRAMDict: [String : String]) {
-            self.NVRAMDict = NVRAMDict
-        }
-    }
-    
-    guard let encoded = try? encoder.encode(codableStruct(NVRAMDict: Dict).NVRAMDict), let strRaw = String(data: encoded, encoding: .utf8) else {
+    guard let encoded = try? encoder.encode(Dict), let strRaw = String(data: encoded, encoding: .utf8) else {
         fatalError("Unable to get XML from dictionary, Sorry.")
     }
     
