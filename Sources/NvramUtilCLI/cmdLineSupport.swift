@@ -1,3 +1,4 @@
+import Foundation
 struct CMDLineSupport {
     
     static let CMDLineArgs = Array(CommandLine.arguments.dropFirst())
@@ -16,9 +17,8 @@ struct CMDLineSupport {
         return CMDLineArgs[index + 1]
     }
     
-    static let shouldForceSync = CMDLineArgs.contains("--force-sync") || CMDLineArgs.contains("-f")
-    static let shouldntSync = CMDLineArgs.contains("--no-sync") || CMDLineArgs.contains("-n")
     static let shouldPrintHelpMessage = CMDLineArgs.contains("--help") || CMDLineArgs.contains("-h")
+    static let useJSON = CMDLineArgs.contains("--json") || CMDLineArgs.contains("-j")
     
     static let helpMessage = """
 NVRAMUtil - By NSSerena
@@ -28,14 +28,36 @@ Usage: nvramutil <option> [NVRAM Variable..]
 Options:
     -a, --all                                       Print all NVRAM Variables and their values
     -l --list                                       List all NVRAM Variables without their values
-    -f, --force-sync                                Force Sync NVRAM Variables that are set by NVRAMUtil
-    -n, --no-sync                                   Don't sync a NVRAM Variable if the user specifies to set one
+    -j, --json                                      Output any NVRAM Variable values in JSON format
     -p, --print  VARIABLE-TO-PRINT                  Print a specicifed NVRAM Variable
     -d, --delete VARIABLE-TO-DELETE                 Specify a NVRAM Variable to delete
 
 For setting an NVRAM Variable to a specific value:
-VARIABLE-NAME=VARIABLE-VALUE. Example: `nvramutil example=value1`
+VARIABLE-NAME=VARIABLE-VALUE.
+Examples:
+    nvramutil randomVar=randomValue
+    nvramutil -d randomVar
+    nvramutil -a -j
 """
     
     public init() {}
+}
+
+internal func convertToJSON(Dict: [String : String]) -> Any {
+    guard let data = try? JSONSerialization.data(withJSONObject: Dict, options: .prettyPrinted), let json = try? JSONSerialization.jsonObject(with: data, options: []) else {
+        fatalError("Unable to convert \"\(Dict)\" to JSON. Sorry.")
+    }
+    return json
+}
+
+/// Prints in JSON Format if the user used --json/-j, otherwise print normally
+internal func printVar(dict: [String : String]) {
+    if CMDLineSupport.useJSON {
+        let json = convertToJSON(Dict: dict)
+        print(json)
+    } else {
+        for (key, value) in dict {
+            print("\(key): \(value)")
+        }
+    }
 }

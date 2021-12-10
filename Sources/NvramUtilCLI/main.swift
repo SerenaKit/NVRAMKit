@@ -8,7 +8,7 @@ import libNVRAMSwift
 
 // Print the help message if the user used --help/-h or if no arguments were specified
 if CMDLineSupport.shouldPrintHelpMessage || CMDLineSupport.CMDLineArgs.isEmpty {
-    print(CMDLineSupport.shouldPrintHelpMessage)
+    print(CMDLineSupport.helpMessage)
     exit(0)
 }
 let nvram = NVRAM()
@@ -24,9 +24,7 @@ for variable in variablesToSet {
     let variableValue = components[1]
     do {
         try nvram.createOrSetOFVariable(variableName: variableName, variableValue: variableValue)
-        if !CMDLineSupport.shouldntSync {
-            try nvram.syncOFVariable(variableName: variableName, forceSync: CMDLineSupport.shouldForceSync)
-        }
+        try nvram.syncOFVariable(variableName: variableName, forceSync: false)
     } catch {
         print(error.localizedDescription)
     }
@@ -43,9 +41,8 @@ for arg in CMDLineSupport.CMDLineArgs {
     switch arg {
     case "--all", "-a":
         let dict = getAllNVRAMVariables()
-        for (key, value) in dict {
-            print("\(key): \(value ?? "Unknown Value")")
-        }
+        let wrapped = dict.compactMapValues { $0 ?? "Unknown Value" }
+        printVar(dict: wrapped)
         
     case "--list", "-l":
         let dict = getAllNVRAMVariables()
@@ -54,7 +51,8 @@ for arg in CMDLineSupport.CMDLineArgs {
     case "--print", "-p":
         let variableToPrint = CMDLineSupport.parseCMDLineArgument(longOpt: "--print", shortOpt: "-p", description: "NVRAM Variable to print")
         let value = nvram.OFVariableValue(variableName: variableToPrint)
-        print("\(variableToPrint): \(value ?? "Unknown Value")")
+        let dict = [variableToPrint : value ?? "Unknown Value"]
+        printVar(dict: dict)
     case "--delete", "-d":
         let variableToDelete = CMDLineSupport.parseCMDLineArgument(longOpt: "--delete", shortOpt: "-d", description: "NVRAM Variable to delete")
         do {
