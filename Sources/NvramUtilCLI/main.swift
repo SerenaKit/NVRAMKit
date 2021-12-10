@@ -7,15 +7,15 @@ import libNVRAMSwift
 #endif
 
 // Print the help message if the user used --help/-h or if no arguments were specified
-if CMDLineArgs.contains("--help") || CMDLineArgs.contains("-h") || CMDLineArgs.isEmpty {
-    print(helpMessage)
+if CMDLineSupport.shouldPrintHelpMessage || CMDLineSupport.CMDLineArgs.isEmpty {
+    print(CMDLineSupport.shouldPrintHelpMessage)
     exit(0)
 }
 let nvram = NVRAM()
 
 
 /// Array of variables that the utility should set values for, ie test=testValue
-let variablesToSet = CMDLineArgs.filter() { $0.contains("=") }
+let variablesToSet = CMDLineSupport.CMDLineArgs.filter() { $0.contains("=") }
 
 for variable in variablesToSet {
     // Divide the variable name given, and the variable value given
@@ -24,50 +24,42 @@ for variable in variablesToSet {
     let variableValue = components[1]
     do {
         try nvram.createOrSetOFVariable(variableName: variableName, variableValue: variableValue)
-        if !shouldntSync {
-            try nvram.syncOFVariable(variableName: variableName, forceSync: shouldForceSync)
+        if !CMDLineSupport.shouldntSync {
+            try nvram.syncOFVariable(variableName: variableName, forceSync: CMDLineSupport.shouldForceSync)
         }
     } catch {
         print(error.localizedDescription)
     }
 }
 
-for arg in CMDLineArgs {
+func getAllNVRAMVariables() -> [String : String? ]{
+    guard let dict = nvram.getAllOFVariables() else {
+        fatalError("Couldn't get all NVRAM Variables. Sorry.")
+    }
+    return dict
+}
+
+for arg in CMDLineSupport.CMDLineArgs {
     switch arg {
-    case "--delete", "-d":
-        let variableToDelete = parseCMDLineArgument(longOpt: "--delete", shortOpt: "-d", description: "NVRAM Variable to delete")
-        if !nvram.OFVariableExists(variableName: variableToDelete) {
-            print("NVRAM Variable \(variableToDelete) doesn't exist..still proceeding to (try) deleting.")
-        }
-        do {
-            try nvram.deleteOFVariable(variableName: variableToDelete)
-            print("Deleted NVRAM variable \(variableToDelete)")
-        } catch {
-            print(error.localizedDescription)
-        }
-    case "--all","-a":
-        guard let dict = nvram.getAllOFVariables() else {
-            fatalError("Couldn't get all NVRAM Variables. Sorry")
-        }
+    case "--all", "-a":
+        let dict = getAllNVRAMVariables()
         for (key, value) in dict {
             print("\(key): \(value ?? "Unknown Value")")
         }
+        
     case "--list", "-l":
-        guard let dict = nvram.getAllOFVariables() else {
-            fatalError("Couldn't get all NVRAM Variables. Sorry")
-        }
-        for (key, _) in dict {
-            print(key)
-        }
+        let dict = getAllNVRAMVariables()
+        print(dict.keys.joined(separator: "\n"))
+        
     case "--print", "-p":
-        let variableToPrint = parseCMDLineArgument(longOpt: "--print", shortOpt: "-p", description: "NVRAM Variable to print")
-        let variableValue = nvram.OFVariableValue(variableName: variableToPrint)
-        print("\(variableToPrint): \(variableValue ?? "Unknown Value")")
-    case "-s", "--sync":
-        let variableToSync = parseCMDLineArgument(longOpt: "--sync", shortOpt: "-s", description: "NVRAM Variable to sync")
+        let variableToPrint = CMDLineSupport.parseCMDLineArgument(longOpt: "--print", shortOpt: "-p", description: "NVRAM Variable to print")
+        let value = nvram.OFVariableValue(variableName: variableToPrint)
+        print("\(variableToPrint): \(value ?? "Unknown Value")")
+    case "--delete", "-d":
+        let variableToDelete = CMDLineSupport.parseCMDLineArgument(longOpt: "--delete", shortOpt: "-d", description: "NVRAM Variable to delete")
         do {
-            try nvram.syncOFVariable(variableName: variableToSync, forceSync: shouldForceSync)
-            print("Synced variable.")
+            try nvram.deleteOFVariable(variableName: variableToDelete)
+            print("Deleted NVRAM Variable \(variableToDelete)")
         } catch {
             print(error.localizedDescription)
         }
