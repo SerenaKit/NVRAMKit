@@ -1,7 +1,7 @@
 # libNVRAMSwift
 
 A Library to manage NVRAM Stuff, written in Swift.
-CLI Example utility has only been tested on jailbroken iOS
+CLI Example utility [here](https://github.com/Serena-io/NvramUtil)
 
 ## Library Usage
 Declare a new instance of the NVRAM Struct, for example:
