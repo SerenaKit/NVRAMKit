@@ -29,12 +29,14 @@ public struct NVRAM {
     }
     
     /// Converts the value of an OF Variable
-    internal func convertValueToString(_ value: Any) -> String? {
+    internal func tryConvertToString(_ value: Any) -> String? {
         // Convert it if it's Data
         if let valueData = value as? Data {
             return String(data: valueData, encoding: .utf8)
+        } else if let valStr = value as? String {
+            return valStr
         }
-        return value as? String
+        return "\(value)"
     }
     
     /// Returns the value of an NVRAM Variable
@@ -48,7 +50,7 @@ public struct NVRAM {
      
         let ref = IORegistryEntryCreateCFProperty(entry, name as CFString, kCFAllocatorDefault, 0).takeRetainedValue()
         
-        let converted = convertValueToString(ref)
+        let converted = tryConvertToString(ref)
         return converted
     }
     
@@ -95,7 +97,7 @@ public struct NVRAM {
         let rawDict = dict.pointee?.takeRetainedValue() as? Dictionary<String, Any>
         
         // Dictionary of converted OF Variable values
-        let convertedDict = rawDict?.mapValues() { return convertValueToString($0) }
+        let convertedDict = rawDict?.mapValues() { return tryConvertToString($0) }
         
         return convertedDict
     }
