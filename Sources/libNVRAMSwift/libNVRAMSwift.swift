@@ -106,13 +106,15 @@ public struct NVRAM {
 }
 
 /// Errors that could be encountered with NVRAM Functions
- enum libNVRAMErrors:Error, CustomStringConvertible {
+ enum libNVRAMErrors:Error  {
     case couldntSetOFVariableValue(variableName:String, variableValueGiven:Any, errorEncountered:String)
-     
-     var description: String {
-       switch self {
-       case .couldntSetOFVariableValue(let variableName, let variableValueGiven, let errorEncountered):
-         return "Couldn't Set Value of NVRAM Variable \"\(variableName)\" to value \(variableValueGiven), error: \(errorEncountered)"
-       }
-     }
+ }
+  
+extension libNVRAMErrors:LocalizedError {
+    var description: String {
+        switch self {
+        case .couldntSetOFVariableValue(let variableName, let variableValueGiven, let errorEncountered):
+            return "Couldn't Set Value of NVRAM Variable \"\(variableName)\" to value \(variableValueGiven), error: \(errorEncountered)"
+        }
+    }
 }
