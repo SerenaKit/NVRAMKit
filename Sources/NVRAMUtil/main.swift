@@ -17,6 +17,8 @@ let nvram = NVRAM()
 /// Array of variables that the utility should set values for, ie test=testValue
 let variablesToSet = CMDLineSupport.CMDLineArgs.filter() { $0.contains("=") }
 
+// The following loop sets the NVRAM Variables to the specified values
+// if any were given by the user
 for variable in variablesToSet {
     // Divide the variable name given, and the variable value given
     let components = variable.components(separatedBy: "=")
@@ -25,8 +27,12 @@ for variable in variablesToSet {
     do {
         try nvram.createOrSetOFVariable(variableName: variableName, variableValue: variableValue)
         try nvram.syncOFVariable(variableName: variableName, forceSync: false)
-    } catch {
+        print("\(variableName): \(variableValue)")
+    } catch let error as NSError {
         print(error.localizedDescription)
+        if let recoverySuggestion = error.localizedRecoverySuggestion {
+            print("Recovery Suggestion: \(recoverySuggestion)")
+        }
     }
 }
 
@@ -58,8 +64,11 @@ for arg in CMDLineSupport.CMDLineArgs {
         do {
             try nvram.deleteOFVariable(variableName: variableToDelete)
             print("Deleted NVRAM Variable \(variableToDelete)")
-        } catch {
+        } catch let error as NSError {
             print(error.localizedDescription)
+            if let recoverySuggestion = error.localizedRecoverySuggestion {
+                print("Recovery Suggestion: \(recoverySuggestion)")
+            }
         }
     default:
         break

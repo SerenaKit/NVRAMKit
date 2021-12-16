@@ -41,6 +41,8 @@ public class NVRAM {
     /// Returns the value of an NVRAM Variable
     public func OFVariableValue(variableName name: String) -> String? {
         
+        // Make sure the variable exists first
+        // otherwise return nil
         guard OFVariableExists(variableName: name) else {
             return nil
         }
@@ -52,12 +54,12 @@ public class NVRAM {
     }
     
     /// Create or set a specified NVRAM Variable to a specified value
-    public func createOrSetOFVariable(variableName name: String, variableValue value: String) throws {
+    public func createOrSetOFVariable(variableName name: String, variableValue value: Any) throws {
         
         let setStatus = IORegistryEntrySetCFProperty(NVRAMIORegistryEntry, name as CFString, value as CFTypeRef)
         guard setStatus == KERN_SUCCESS else {
             let errorEncountered = machErrorString(errorValue: setStatus)
-            throw libNVRAMErrors.couldntSetOFVariableValue(variableName: name, variableValueGiven: value, errorEncountered: errorEncountered)
+            throw NVRAMErrors.couldntSetOFVariableValue(variableName: name, variableValueGiven: value, errorEncountered: errorEncountered)
         }
     }
     
@@ -105,18 +107,26 @@ public class NVRAM {
     deinit {
         IOObjectRelease(NVRAMIORegistryEntry)
     }
+    
 }
 
-/// Errors that could be encountered with NVRAM Functions
-enum libNVRAMErrors:Error  {
+public enum NVRAMErrors: LocalizedError {
     case couldntSetOFVariableValue(variableName:String, variableValueGiven:Any, errorEncountered:String)
 }
 
-extension libNVRAMErrors:LocalizedError {
-    var description: String {
+extension NVRAMErrors {
+    public var errorDescription: String? {
         switch self {
         case .couldntSetOFVariableValue(let variableName, let variableValueGiven, let errorEncountered):
-            return "Couldn't Set Value of NVRAM Variable \"\(variableName)\" to value \(variableValueGiven), error: \(errorEncountered)"
+            return "Couldn't set value of NVRAM Variable \(variableName) to \(variableValueGiven): \(errorEncountered)"
+        }
+    }
+    
+    /// Provide  Recovery Suggestions
+    public var recoverySuggestion: String? {
+        switch self {
+        case .couldntSetOFVariableValue(_, _, _):
+            return "Try running the program again as root."
         }
     }
 }
