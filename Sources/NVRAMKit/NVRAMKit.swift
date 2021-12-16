@@ -4,13 +4,16 @@ import IOKit
 #endif
 import Foundation
 
+
+/// A Class which manages NVRAM Stuff
+/// such as getting the values of, deleting, and syncing NVRAM Variables
 public class NVRAM {
     /// Returns the IOEntryRegistry for NVRAM Variables
     private let NVRAMIORegistryEntry: io_registry_entry_t = {
         return IORegistryEntryFromPath(kIOMasterPortDefault, "IODeviceTree:/options")
     }()
     
-    /// Returns true or false based on whether or not the specified OF Variable exists
+    /// Returns true or false based on whether or not the specified NVRAM Variable exists
     public func OFVariableExists(variableName name:String) -> Bool {
         return IORegistryEntryCreateCFProperty(NVRAMIORegistryEntry, name as CFString, kCFAllocatorDefault, 0) != nil
     }
@@ -63,6 +66,7 @@ public class NVRAM {
         try createOrSetOFVariable(variableName: kIONVRAMDeletePropertyKey, variableValue: name)
     }
     
+    /// Syncs a specified NVRAM Variable
     public func syncOFVariable(variableName name: String, forceSync: Bool) throws {
         // If forceSync is true, use the force-sync-now key, otherwise use the normal one
         let syncKey = forceSync ? "IONVRAM-FORCESYNCNOW-PROPERTY" : kIONVRAMSyncNowPropertyKey

@@ -6,6 +6,7 @@ xcuserdata/
 DerivedData/
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .swiftpm/xcode/
+docs/
 
 # theos stuff
 .theos/
