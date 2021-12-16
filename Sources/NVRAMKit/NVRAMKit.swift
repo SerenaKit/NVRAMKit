@@ -38,21 +38,21 @@ public class NVRAM {
         return "\(value)"
     }
     
-    /// Returns the value of an NVRAM Variable
-    public func OFVariableValue(variableName name: String) -> String? {
-        
-        // Make sure the variable exists first
-        // otherwise return nil
-        guard OFVariableExists(variableName: name) else {
-            return nil
+    /// A Subscript which returns the value of a specified NVRAM Variabke
+    public subscript(variableName name: String) -> String? {
+        get {
+            // Make sure the variable exists first
+            // otherwise return nil
+            guard OFVariableExists(variableName: name) else {
+                return nil
+            }
+            
+            let ref = IORegistryEntryCreateCFProperty(NVRAMIORegistryEntry, name as CFString, kCFAllocatorDefault, 0).takeRetainedValue()
+            
+            let converted = tryConvertToString(ref)
+            return converted
         }
-        
-        let ref = IORegistryEntryCreateCFProperty(NVRAMIORegistryEntry, name as CFString, kCFAllocatorDefault, 0).takeRetainedValue()
-        
-        let converted = tryConvertToString(ref)
-        return converted
     }
-    
     /// Create or set a specified NVRAM Variable to a specified value
     public func createOrSetOFVariable(variableName name: String, variableValue value: Any) throws {
         

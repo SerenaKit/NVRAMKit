@@ -18,12 +18,11 @@ let nvram = NVRAM()
 ```
 
 ### Getting value of existing NVRAM Variable
-Use the `OFVariableValue` function to get the value of an existing NVRAM Variable. Example:
+Use NVRAM Class Subscript with the `variableName` Parameter, Example:
 ```swift
 let nvram = NVRAM()
-let nvramVariableName = "SystemAudioVolume"
 // Returns the value of NVRAM variable "SystemAudioVolume"
-let value = nvram.OFVariableValue(variableName: nvramVariableName)
+let value = nvram["SystemAudioVolume"]
 print(value ?? "Unknown Value")
 ```
 
