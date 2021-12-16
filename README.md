@@ -88,26 +88,7 @@ NVRAMUtil runs on both Jailbroken iOS and macOS Devices
 ## Options
 ### Formatting Options:
 - `-j, --json` Outputs specified NVRAM Variable(s) and their values in JSON Format, example:
-
-```
-$ nvramutil --print com.apple.System.boot-nonce --json
-{
-    "com.apple.System.boot-nonce" = 0x1111111111111111;
-}
-```
 - `-x, --xml` Outputs specified NVRAM Variable(s) and their values in XML Format, example:
-
-```
-$ nvramutil --print com.apple.System.boot-nonce --xml
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>com.apple.System.boot-nonce</key>
-	<string>0x1111111111111111</string>
-</dict>
-</plist>
-```
 
 ## Listing Options:
 - `-a, --all` Prints all NVRAM Variables and their values
