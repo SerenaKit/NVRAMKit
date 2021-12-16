@@ -1,0 +1,8 @@
+Package: com.serena.nvramutil
+Name: nvramutil
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: A CLI tool to manage NVRAM Variables
+Maintainer: Serena
+Author: Serena
+Section: System
