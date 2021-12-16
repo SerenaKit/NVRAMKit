@@ -16,7 +16,7 @@ let nvram = NVRAM()
 ```
 
 ### Getting value of existing NVRAM Variable
-use the `OFVariableValue` function to get the value of an existing NVRAM Variable. Example:
+Use the `OFVariableValue` function to get the value of an existing NVRAM Variable. Example:
 ```swift
 let nvram = NVRAM()
 let nvramVariableName = "SystemAudioVolume"
@@ -26,7 +26,7 @@ print(value ?? "Unknown Value")
 ```
 
 ### Creating / Setting variables of NVRAM Variables
-for creating a new NVRAM variable or setting the value of an existing NVRAM Variable, use the `createOrSetOFVariable` function. Note that this function throws. Example:
+For creating a new NVRAM variable or setting the value of an existing NVRAM Variable, use the `createOrSetOFVariable` function. Note that this function throws. Example:
 ```swift
 let nvram = NVRAM()
 // Creates a new NVRAM Variable by the name of "exampleVariable" with value "example value"
@@ -40,7 +40,7 @@ do {
 ```
 
 ### Deleting an NVRAM Variable
-use the `deleteOFVariable` function to delete an NVRAM Variable. Example:
+Use the `deleteOFVariable` function to delete an NVRAM Variable. Example:
 ```swift
 let nvram = NVRAM()
 do {
@@ -51,8 +51,19 @@ do {
 }
 ```
 
+### Syncing an NVRAM Variabke
+Use the `syncOFVariable` function to sync an NVRAM Variable. In the Parameters, you can specify force syncing the variable (though not recommended at all), Example:
+```swift
+let nvram = NVRAM()
+do {
+  // Syncs the NVRAM Variable "SystemAudioVolume"
+  try nvram.syncOFVariable(variableName: SystemAudioVolume, forceSync: false)
+} catch {
+  print(error.localizedDescription)
+}
+```
 ### Checking for existance of NVRAM Variable
-use the `OFVariableExists` function to return true or false based on whether or not an NVRAM Variable exists. Example:
+Use the `OFVariableExists` function to return true or false based on whether or not an NVRAM Variable exists. Example:
 ```swift
 let nvram = NVRAM()
 // Returns true or false based on whether or not an NVRAM Variable by the name of "SystemAudioVolume" exists
