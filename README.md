@@ -51,7 +51,7 @@ do {
 }
 ```
 
-### Syncing an NVRAM Variabke
+### Syncing an NVRAM Variable
 Use the `syncOFVariable` function to sync an NVRAM Variable. In the Parameters, you can specify force syncing the variable (though not recommended at all), Example:
 ```swift
 let nvram = NVRAM()
