@@ -8,8 +8,9 @@ import Foundation
 /// A Class which manages NVRAM Stuff
 /// such as getting the values of, deleting, and syncing NVRAM Variables
 public class NVRAM {
+    
     /// Returns the IOEntryRegistry for NVRAM Variables
-    private let NVRAMIORegistryEntry: io_registry_entry_t = {
+    let NVRAMIORegistryEntry: io_registry_entry_t = {
         return IORegistryEntryFromPath(kIOMasterPortDefault, "IODeviceTree:/options")
     }()
     
@@ -72,10 +73,12 @@ public class NVRAM {
         let syncKey = forceSync ? "IONVRAM-FORCESYNCNOW-PROPERTY" : kIONVRAMSyncNowPropertyKey
         try createOrSetOFVariable(variableName: syncKey, variableValue: name)
     }
+    
     /// Returns a dictionary of all OF Variable names and values
     public func getAllOFVariables() -> [String : String?]? {
         let dict = UnsafeMutablePointer<Unmanaged<CFMutableDictionary>?>.allocate(capacity: 1)
         defer {
+            // Make sure to deallocate the dictionary once we're done with it
             dict.deallocate()
         }
         
@@ -95,6 +98,7 @@ public class NVRAM {
         return convertedDict
     }
     
+    /// Initializes a new NVRAM Instance
     public init() {}
     
     // Make sure we free the NVRAM IORegistryEntry
