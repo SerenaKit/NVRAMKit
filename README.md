@@ -1,9 +1,11 @@
 # NVRAMKit
 
 A Library and CLI Utility to manage NVRAM Stuff, written in Swift.
+- [Library]
+  -[Adding Library to Project](
 
 # Library
-## Adding Library to project
+## Adding Library to Project
 Simply add this line to the `dependencies` section of your `Package.swift` file:
 ```swift
 .package(url: "https://github.com/Serena-io/NVRAMKit.git", branch: "main")
@@ -90,11 +92,11 @@ NVRAMUtil runs on both Jailbroken iOS and macOS Devices
 - `-j, --json` Outputs specified NVRAM Variable(s) and their values in JSON Format, example:
 - `-x, --xml` Outputs specified NVRAM Variable(s) and their values in XML Format, example:
 
-## Listing Options:
+### Listing Options:
 - `-a, --all` Prints all NVRAM Variables and their values
 - `-l, --list` Prints all NVRAM Variable names without their values
 
-## Managing individual NVRAM Variables:
+### Managing individual NVRAM Variables:
 - `-p, --print VARIABLE-TO-PRINT` Prints a specified NVRAM Variable
 - `-d, --delete VARIABLE-TO-DELETE` Delete a specified NVRAM Variable
 - `VARIABLE-NAME=VARIABLE-VALUE` Set / Create a NVRAM Variable with a specified value
