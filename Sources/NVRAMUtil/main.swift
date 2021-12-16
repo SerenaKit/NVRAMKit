@@ -58,7 +58,8 @@ for arg in CMDLineSupport.CMDLineArgs {
         
     case "--print", "-p":
         let variableToPrint = CMDLineSupport.parseCMDLineArgument(longOpt: "--print", shortOpt: "-p", description: "NVRAM Variable to print")
-        let value = nvram[variableName: variableToPrint]
+        // Get the value of the specified NVRAM Variable
+        let value = nvram[variableToPrint]
         let dict = [variableToPrint : value ?? "Unknown Value"]
         printFormatted(FromDict: dict)
         

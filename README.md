@@ -16,11 +16,11 @@ let nvram = NVRAM()
 ```
 
 ### Getting value of existing NVRAM Variable
-Use NVRAM Class Subscript with the `variableName` Parameter, Example:
+Use NVRAM Class Subscript, Example:
 ```swift
 let nvram = NVRAM()
 // Returns the value of NVRAM variable "SystemAudioVolume"
-let value = nvram[variableName: "SystemAudioVolume"]
+let value = nvram["SystemAudioVolume"]
 print(value ?? "Unknown Value")
 ```
 
@@ -86,8 +86,8 @@ The CLI Utility, going by the name `NVRAMUtil`, uses the NVRAMKit library to man
 NVRAMUtil runs on both Jailbroken iOS and macOS Devices
 ## Options
 ### Formatting Options:
-- `-j, --json` Outputs specified NVRAM Variable(s) and their values in JSON Format, example:
-- `-x, --xml` Outputs specified NVRAM Variable(s) and their values in XML Format, example:
+- `-j, --json` Outputs specified NVRAM Variable(s) and their values in JSON Format
+- `-x, --xml` Outputs specified NVRAM Variable(s) and their values in XML Format
 
 ### Listing Options:
 - `-a, --all` Prints all NVRAM Variables and their values

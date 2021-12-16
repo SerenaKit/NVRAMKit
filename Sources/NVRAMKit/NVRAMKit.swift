@@ -39,7 +39,7 @@ public class NVRAM {
     }
     
     /// A Subscript which returns the value of a specified NVRAM Variable
-    public subscript(variableName name: String) -> String? {
+    public subscript(_ name: String) -> String? {
         get {
             // Make sure the variable exists first
             // otherwise return nil
