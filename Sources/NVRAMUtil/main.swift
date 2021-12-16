@@ -33,6 +33,8 @@ for variable in variablesToSet {
         if let recoverySuggestion = error.localizedRecoverySuggestion {
             print("Recovery Suggestion: \(recoverySuggestion)")
         }
+        
+        exit(EXIT_FAILURE)
     }
 }
 
@@ -64,11 +66,14 @@ for arg in CMDLineSupport.CMDLineArgs {
         do {
             try nvram.deleteOFVariable(variableName: variableToDelete)
             print("Deleted NVRAM Variable \(variableToDelete)")
+            
         } catch let error as NSError {
             print(error.localizedDescription)
             if let recoverySuggestion = error.localizedRecoverySuggestion {
                 print("Recovery Suggestion: \(recoverySuggestion)")
             }
+            
+            exit(EXIT_FAILURE)
         }
     default:
         break

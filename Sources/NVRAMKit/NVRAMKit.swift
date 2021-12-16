@@ -67,6 +67,12 @@ public class NVRAM {
     /// Delete a specified NVRAM Variable
     public func deleteOFVariable(variableName name: String) throws {
         try createOrSetOFVariable(variableName: kIONVRAMDeletePropertyKey, variableValue: name)
+        
+        // Make sure the variable doesn't exist
+        // After we tried to delete it
+        guard !OFVariableExists(variableName: name) else {
+            throw NVRAMErrors.OFVariableStillExistsAfterAttemptedDeletion(variableName: name)
+        }
     }
     
     /// Syncs a specified NVRAM Variable
@@ -111,7 +117,8 @@ public class NVRAM {
 }
 
 public enum NVRAMErrors: LocalizedError {
-    case couldntSetOFVariableValue(variableName:String, variableValueGiven:Any, errorEncountered:String)
+    case couldntSetOFVariableValue(variableName: String, variableValueGiven: Any, errorEncountered: String)
+    case OFVariableStillExistsAfterAttemptedDeletion(variableName: String)
 }
 
 extension NVRAMErrors {
@@ -119,14 +126,16 @@ extension NVRAMErrors {
         switch self {
         case .couldntSetOFVariableValue(let variableName, let variableValueGiven, let errorEncountered):
             return "Couldn't set value of NVRAM Variable \(variableName) to \(variableValueGiven): \(errorEncountered)"
+        case .OFVariableStillExistsAfterAttemptedDeletion(let variableName):
+            return "Tried to delete NVRAM Variable \(variableName), but variable STILL Exists."
         }
     }
     
     /// Provide  Recovery Suggestions
     public var recoverySuggestion: String? {
         switch self {
-        case .couldntSetOFVariableValue(_, _, _):
-            return "Try running the program again as root."
+        case .couldntSetOFVariableValue(_, _, _), .OFVariableStillExistsAfterAttemptedDeletion(_):
+            return "Try running as root."
         }
     }
 }
