@@ -22,7 +22,7 @@ Use NVRAM Class Subscript with the `variableName` Parameter, Example:
 ```swift
 let nvram = NVRAM()
 // Returns the value of NVRAM variable "SystemAudioVolume"
-let value = nvram["SystemAudioVolume"]
+let value = nvram[variableName: "SystemAudioVolume"]
 print(value ?? "Unknown Value")
 ```
 
