@@ -1,8 +1,6 @@
 # NVRAMKit
 
 A Library and CLI Utility to manage NVRAM Stuff, written in Swift.
-- [Library]
-  -[Adding Library to Project](
 
 # Library
 ## Adding Library to Project
