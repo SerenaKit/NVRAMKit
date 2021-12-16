@@ -2,6 +2,13 @@
 
 A Library and CLI Utility to manage NVRAM Stuff, written in Swift.
 
+# Library
+## Adding Library to project
+Simply add this line to the `dependencies` section of your `Package.swift` file:
+```swift
+.package(url: "https://github.com/Serena-io/NVRAMKit.git", branch: "main")
+```
+
 ## Library Usage
 Declare a new instance of the NVRAM Struct, for example:
 ```swift
