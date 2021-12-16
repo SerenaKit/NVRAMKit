@@ -42,7 +42,7 @@ for arg in CMDLineSupport.CMDLineArgs {
     case "--all", "-a":
         let dict = getAllNVRAMVariables()
         let wrapped = dict.compactMapValues { $0 ?? "Unknown Value" }
-        printFormatted(dict: wrapped)
+        printFormatted(FromDict: wrapped)
         
     case "--list", "-l":
         let dict = getAllNVRAMVariables()
@@ -52,7 +52,7 @@ for arg in CMDLineSupport.CMDLineArgs {
         let variableToPrint = CMDLineSupport.parseCMDLineArgument(longOpt: "--print", shortOpt: "-p", description: "NVRAM Variable to print")
         let value = nvram.OFVariableValue(variableName: variableToPrint)
         let dict = [variableToPrint : value ?? "Unknown Value"]
-        printFormatted(dict: dict)
+        printFormatted(FromDict: dict)
     case "--delete", "-d":
         let variableToDelete = CMDLineSupport.parseCMDLineArgument(longOpt: "--delete", shortOpt: "-d", description: "NVRAM Variable to delete")
         do {

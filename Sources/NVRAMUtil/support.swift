@@ -48,7 +48,7 @@ Examples:
     public init() {}
 }
 
-internal func convertToJSON(Dict: [String : String]) -> Any {
+internal func convertToJSON(fromDict Dict: [String : String]) -> Any {
     guard let data = try? JSONSerialization.data(withJSONObject: Dict, options: .prettyPrinted), let json = try? JSONSerialization.jsonObject(with: data, options: []) else {
         fatalError("Unable to convert \"\(Dict)\" to JSON. Sorry.")
     }
@@ -67,9 +67,9 @@ internal func convertToXML(fromDict Dict: [String : String]) -> String {
 }
 
 /// Prints in JSON Format if the user used --json/-j, otherwise print normally
-internal func printFormatted(dict: [String : String]) {
+internal func printFormatted(FromDict dict: [String : String]) {
     if CMDLineSupport.useJSON {
-        let json = convertToJSON(Dict: dict)
+        let json = convertToJSON(fromDict: dict)
         print(json)
     } else if CMDLineSupport.useXML {
         let xml = convertToXML(fromDict: dict)
