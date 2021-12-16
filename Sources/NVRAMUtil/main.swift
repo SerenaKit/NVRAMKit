@@ -11,8 +11,8 @@ if CMDLineSupport.shouldPrintHelpMessage || CMDLineSupport.CMDLineArgs.isEmpty {
     print(CMDLineSupport.helpMessage)
     exit(0)
 }
-let nvram = NVRAM()
 
+let nvram = NVRAM()
 
 /// Array of variables that the utility should set values for, ie test=testValue
 let variablesToSet = CMDLineSupport.CMDLineArgs.filter() { $0.contains("=") }

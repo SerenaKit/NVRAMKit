@@ -4,20 +4,15 @@ import IOKit
 #endif
 import Foundation
 
-public struct NVRAM {
-    
+public class NVRAM {
     /// Returns the IOEntryRegistry for NVRAM Variables
-    private func getIOEntryReg() -> io_registry_entry_t {
-        var masterPort = io_master_t()
-        IOMasterPort(bootstrap_port, &masterPort)
-        return IORegistryEntryFromPath(masterPort, "IODeviceTree:/options")
-    }
+    private let NVRAMIORegistryEntry: io_registry_entry_t = {
+        return IORegistryEntryFromPath(kIOMasterPortDefault, "IODeviceTree:/options")
+    }()
     
     /// Returns true or false based on whether or not the specified OF Variable exists
     public func OFVariableExists(variableName name:String) -> Bool {
-        let entry = getIOEntryReg()
-        defer { IOObjectRelease(entry) }
-        return IORegistryEntryCreateCFProperty(entry, name as CFString, kCFAllocatorDefault, 0) != nil
+        return IORegistryEntryCreateCFProperty(NVRAMIORegistryEntry, name as CFString, kCFAllocatorDefault, 0) != nil
     }
     
     /// Returns the string description of a mach error
@@ -41,14 +36,12 @@ public struct NVRAM {
     
     /// Returns the value of an NVRAM Variable
     public func OFVariableValue(variableName name: String) -> String? {
-        let entry = getIOEntryReg()
-        defer { IOObjectRelease(entry) }
         
         guard OFVariableExists(variableName: name) else {
             return nil
         }
-     
-        let ref = IORegistryEntryCreateCFProperty(entry, name as CFString, kCFAllocatorDefault, 0).takeRetainedValue()
+        
+        let ref = IORegistryEntryCreateCFProperty(NVRAMIORegistryEntry, name as CFString, kCFAllocatorDefault, 0).takeRetainedValue()
         
         let converted = tryConvertToString(ref)
         return converted
@@ -56,10 +49,8 @@ public struct NVRAM {
     
     /// Create or set a specified NVRAM Variable to a specified value
     public func createOrSetOFVariable(variableName name: String, variableValue value: String) throws {
-        let entry = getIOEntryReg()
-        defer { IOObjectRelease(entry) }
         
-        let setStatus = IORegistryEntrySetCFProperty(entry, name as CFString, value as CFTypeRef)
+        let setStatus = IORegistryEntrySetCFProperty(NVRAMIORegistryEntry, name as CFString, value as CFTypeRef)
         guard setStatus == KERN_SUCCESS else {
             let errorEncountered = machErrorString(errorValue: setStatus)
             throw libNVRAMErrors.couldntSetOFVariableValue(variableName: name, variableValueGiven: value, errorEncountered: errorEncountered)
@@ -79,14 +70,12 @@ public struct NVRAM {
     }
     /// Returns a dictionary of all OF Variable names and values
     public func getAllOFVariables() -> [String : String?]? {
-        let entry = getIOEntryReg()
         let dict = UnsafeMutablePointer<Unmanaged<CFMutableDictionary>?>.allocate(capacity: 1)
         defer {
-            IOObjectRelease(entry)
             dict.deallocate()
         }
         
-        let status = IORegistryEntryCreateCFProperties(entry, dict, kCFAllocatorDefault, 0)
+        let status = IORegistryEntryCreateCFProperties(NVRAMIORegistryEntry, dict, kCFAllocatorDefault, 0)
         
         // Make sure we got the dictionary successfully
         guard status == KERN_SUCCESS else {
@@ -103,13 +92,18 @@ public struct NVRAM {
     }
     
     public init() {}
+    
+    // Make sure we free the NVRAM IORegistryEntry
+    deinit {
+        IOObjectRelease(NVRAMIORegistryEntry)
+    }
 }
 
 /// Errors that could be encountered with NVRAM Functions
- enum libNVRAMErrors:Error  {
+enum libNVRAMErrors:Error  {
     case couldntSetOFVariableValue(variableName:String, variableValueGiven:Any, errorEncountered:String)
- }
-  
+}
+
 extension libNVRAMErrors:LocalizedError {
     var description: String {
         switch self {
