@@ -1,3 +1,4 @@
 #!/bin/sh
 
-ln -s /usr/bin/nvramutil /usr/bin/nvutil
+# Make a symlink to nvramutil called nvutil
+ln -sf /usr/bin/nvramutil /usr/bin/nvutil

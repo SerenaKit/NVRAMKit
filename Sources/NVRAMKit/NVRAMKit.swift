@@ -15,7 +15,7 @@ public class NVRAM {
     }()
     
     /// Returns true or false based on whether or not the specified NVRAM Variable exists
-    public func OFVariableExists(variableName name:String) -> Bool {
+    public func OFVariableExists(named name:String) -> Bool {
         return IORegistryEntryCreateCFProperty(NVRAMIORegistryEntry, name as CFString, kCFAllocatorDefault, 0) != nil
     }
     
@@ -43,7 +43,7 @@ public class NVRAM {
         get {
             // Make sure the variable exists first
             // otherwise return nil
-            guard OFVariableExists(variableName: name) else {
+            guard OFVariableExists(named: name) else {
                 return nil
             }
             
@@ -54,7 +54,7 @@ public class NVRAM {
         }
     }
     /// Create or set a specified NVRAM Variable to a specified value
-    public func createOrSetOFVariable(variableName name: String, variableValue value: Any) throws {
+    public func setOFVariable(named name: String, toValue value: Any) throws {
         
         let setStatus = IORegistryEntrySetCFProperty(NVRAMIORegistryEntry, name as CFString, value as CFTypeRef)
         guard setStatus == KERN_SUCCESS else {
@@ -65,21 +65,22 @@ public class NVRAM {
     
     
     /// Delete a specified NVRAM Variable
-    public func deleteOFVariable(variableName name: String) throws {
-        try createOrSetOFVariable(variableName: kIONVRAMDeletePropertyKey, variableValue: name)
+    public func deleteOFVariable(named name: String) throws {
+        try setOFVariable(named: kIONVRAMDeletePropertyKey, toValue: name)
         
         // Make sure the variable doesn't exist
         // After we tried to delete it
-        guard !OFVariableExists(variableName: name) else {
+        guard !OFVariableExists(named: name) else {
             throw NVRAMErrors.OFVariableStillExistsAfterAttemptedDeletion(variableName: name)
         }
     }
     
     /// Syncs a specified NVRAM Variable
-    public func syncOFVariable(variableName name: String, forceSync: Bool) throws {
+    public func syncOFVariable(named name: String, forceSync: Bool) throws {
         // If forceSync is true, use the force-sync-now key, otherwise use the normal one
         let syncKey = forceSync ? "IONVRAM-FORCESYNCNOW-PROPERTY" : kIONVRAMSyncNowPropertyKey
-        try createOrSetOFVariable(variableName: syncKey, variableValue: name)
+        // to sync an NVRAM Variable, we set the sync key value to the value of the nvram variable
+        try setOFVariable(named: syncKey, toValue: name)
     }
     
     /// Returns a dictionary of all OF Variable names and values

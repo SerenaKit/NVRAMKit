@@ -25,8 +25,8 @@ for variable in variablesToSet {
     let variableName = components[0]
     let variableValue = components[1]
     do {
-        try nvram.createOrSetOFVariable(variableName: variableName, variableValue: variableValue)
-        try nvram.syncOFVariable(variableName: variableName, forceSync: false)
+        try nvram.setOFVariable(named: variableName, toValue: variableValue)
+        try nvram.syncOFVariable(named: variableName, forceSync: false)
         print("\(variableName): \(variableValue)")
     } catch let error as NSError {
         print(error.localizedDescription)
@@ -57,16 +57,27 @@ for arg in CMDLineSupport.CMDLineArgs {
         print(dict.keys.joined(separator: "\n"))
         
     case "--print", "-p":
-        let variableToPrint = CMDLineSupport.parseCMDLineArgument(longOpt: "--print", shortOpt: "-p", description: "NVRAM Variable to print")
+        let variableToPrint = CMDLineSupport.parseCMDLineArgument(
+            longOpt: "--print", shortOpt: "-p", description: "NVRAM Variable to print"
+        )
+        
+        // Warn the user if the variable doesn't even exist
+        if !nvram.OFVariableExists(named: variableToPrint) {
+            print("WARNING: Trying to print NVRAM Variable \(variableToPrint) however variable doesn't exist")
+        }
+        
         // Get the value of the specified NVRAM Variable
         let value = nvram[variableToPrint]
         let dict = [variableToPrint : value ?? "Unknown Value"]
         printFormatted(FromDict: dict)
         
     case "--delete", "-d":
-        let variableToDelete = CMDLineSupport.parseCMDLineArgument(longOpt: "--delete", shortOpt: "-d", description: "NVRAM Variable to delete")
+        let variableToDelete = CMDLineSupport.parseCMDLineArgument(
+            longOpt: "--delete", shortOpt: "-d", description: "NVRAM Variable to delete"
+        )
+        
         do {
-            try nvram.deleteOFVariable(variableName: variableToDelete)
+            try nvram.deleteOFVariable(named: variableToDelete)
             print("Deleted NVRAM Variable \(variableToDelete)")
             
         } catch let error as NSError {
