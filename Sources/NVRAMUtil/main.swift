@@ -90,5 +90,6 @@ for arg in CMDLineSupport.DashCMDLineArgs {
         }
     default:
         print("Unknown argument \(arg)")
+        exit(1)
     }
 }
