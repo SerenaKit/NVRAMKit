@@ -1,7 +1,14 @@
 import Foundation
 struct CMDLineSupport {
     
+    // all command line args inputted by the user
     static let CMDLineArgs = Array(CommandLine.arguments.dropFirst())
+    
+    // command line args inputted by the user that start with a dash
+    // ie --print or -d
+    static let DashCMDLineArgs = CMDLineArgs.filter {
+        $0.starts(with: "-")
+    }
     
     static func parseCMDLineArgument(longOpt:String, shortOpt:String? = nil, fromArgArr ArgArr:[String] = CMDLineArgs, description:String) -> String {
         var optToParse:String {
@@ -12,7 +19,8 @@ struct CMDLineSupport {
             }
         }
         guard let index = ArgArr.firstIndex(of: optToParse), CMDLineArgs.indices.contains(index + 1) else {
-            fatalError("User used \(optToParse) however did not specify a \(description).")
+            print("User used \(optToParse) however did not specify a \(description).")
+            exit(EXIT_FAILURE)
         }
         return CMDLineArgs[index + 1]
     }
@@ -23,7 +31,7 @@ struct CMDLineSupport {
     
     static let helpMessage = """
 NVRAMUtil - By Serena-io
-A CommandLine tool to demonstrate libNVRAMSwift
+A CommandLine tool to manage NVRAM Stuff, made as a demonstration for the NVRAMKit library
 Usage: nvramutil <option> [NVRAM Variable..]
 
 Options for listing:

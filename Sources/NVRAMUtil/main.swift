@@ -45,7 +45,7 @@ func getAllNVRAMVariables() -> [String : String? ]{
     return dict
 }
 
-for arg in CMDLineSupport.CMDLineArgs {
+for arg in CMDLineSupport.DashCMDLineArgs {
     switch arg {
     case "--all", "-a":
         let dict = getAllNVRAMVariables()
@@ -89,6 +89,6 @@ for arg in CMDLineSupport.CMDLineArgs {
             exit(EXIT_FAILURE)
         }
     default:
-        break
+        print("Unknown argument \(arg)")
     }
 }
