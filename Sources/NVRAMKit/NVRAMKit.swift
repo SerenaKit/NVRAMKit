@@ -35,7 +35,6 @@ public class NVRAM {
     /// The IORegistryEntry of NVRAM Variables
     var RegistryEntry: io_registry_entry_t
     
-    
     /// Initializes a new NVRAM instance with the specified `io_registry_entry`
     public init(RegistryEntry: io_registry_entry_t) {
         self.RegistryEntry = RegistryEntry
@@ -79,6 +78,7 @@ public class NVRAM {
         return rawValue as? String
     }
     
+    /// Sets the value of a specified NVRAM Variable to a specified value
     public func SetValue(forVariable variable: String, toValue value: String) throws {
         let status = IORegistryEntrySetCFProperty(RegistryEntry, variable as CFString, value as CFString)
         
@@ -90,10 +90,22 @@ public class NVRAM {
         }
     }
     
+    /// Deletes a specified variable
     public func deleteVariable(_ variable: String) throws {
         try SetValue(forVariable: variable, toValue: kIONVRAMDeletePropertyKey)
     }
     
+    /// Syncs a specified NVRAM Variable,
+    /// if `forceSync` is set to true, then the FORCESYNCNOW Key is used,
+    /// Otherwise the normal SyncNow key is used
+    public func syncVariable(_ variable: String, forceSync: Bool = false) throws {
+        // If forceSync is true, declare SyncKey as the force sync key,
+        // Otherwise declare it as the normal sync key
+        let SyncKey = forceSync ? "IONVRAM-FORCESYNCNOW-PROPERTY" : kIONVRAMSyncNowPropertyKey
+        try SetValue(forVariable: variable, toValue: SyncKey)
+    }
+    
+    /// Returns an optional dictionary of all variables and their values
     public func GetAllVariables() throws -> [String: String?]? {
         let dict = UnsafeMutablePointer<Unmanaged<CFMutableDictionary>?>.allocate(capacity: 1)
         defer {
@@ -122,8 +134,8 @@ public class NVRAM {
         return dictMapped
     }
     
+    // We need to free the RegistryEntry once we're done with it
     deinit {
         IOObjectRelease(RegistryEntry)
     }
 }
-
