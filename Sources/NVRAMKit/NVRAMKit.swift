@@ -92,7 +92,7 @@ public class NVRAM {
     
     /// Deletes a specified variable
     public func deleteVariable(_ variable: String) throws {
-        try SetValue(forVariable: variable, toValue: kIONVRAMDeletePropertyKey)
+        try SetValue(forVariable: kIONVRAMDeletePropertyKey, toValue: variable)
     }
     
     /// Syncs a specified NVRAM Variable,
