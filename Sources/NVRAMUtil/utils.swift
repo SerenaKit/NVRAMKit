@@ -8,30 +8,28 @@ struct getValue: ParsableCommand {
     static var configuration: CommandConfiguration = CommandConfiguration(
         commandName: "get", abstract: "Gets the value of specified NVRAM Variable(s), or all NVRAM Variables"
     )
-
+    
     @Argument(help: "The variable(s) to print the value of")
     var variables: [String] = []
-
+    
     @Flag(help: "Print all NVRAM Variables and their values")
     var printAll: Bool = false
-
+    
     @Flag(help: "List all NVRAM Variables, but without their values")
     var listAll: Bool = false
-
+    
     func run() throws {
         let instance = NVRAM()
-        if !variables.isEmpty {
-            for variable in variables {
-                let value = try instance.GetVariable(name: variable)
-                print("\(variable): \(value ?? "Value not available")")
-            }
+        for variable in variables {
+            let value = try instance.GetVariable(name: variable)
+            print("\(variable): \(value ?? "Value not available")")
         }
-
+        
         if printAll || listAll {
             guard let dict = try instance.GetAllVariables() else {
                 throw CleanExit.message("Unable to get list of NVRAM Variables and their values")
             }
-
+            
             // If printAll is true, print all the variables and their values
             if printAll {
                 for (key, value) in dict {
@@ -52,13 +50,13 @@ struct setNVRAMValue: ParsableCommand {
     static var configuration: CommandConfiguration = CommandConfiguration(
         commandName: "set", abstract: "Sets the value of a specified NVRAM variable"
     )
-
+    
     @Argument(help: "The NVRAM Variable to set the value of")
     var variable: String
-
+    
     @Argument(help: "The Value to set for the specified NVRAM Variable")
     var value: String
-
+    
     func run() throws {
         let instance = NVRAM()
         try instance.SetValue(forVariable: variable, toValue: value)
@@ -74,7 +72,7 @@ struct deleteNVRAMVariable: ParsableCommand {
 
     @Argument(help: "The NVRAM Variable to delete")
     var variable: String
-
+    
     func run() throws {
         let instance = NVRAM()
         try instance.deleteVariable(variable)
