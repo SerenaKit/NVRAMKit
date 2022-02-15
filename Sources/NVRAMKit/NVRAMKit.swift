@@ -102,7 +102,7 @@ public class NVRAM {
         // If forceSync is true, declare SyncKey as the force sync key,
         // Otherwise declare it as the normal sync key
         let SyncKey = forceSync ? "IONVRAM-FORCESYNCNOW-PROPERTY" : kIONVRAMSyncNowPropertyKey
-        try SetValue(forVariable: variable, toValue: SyncKey)
+        try SetValue(forVariable: SyncKey, toValue: variable)
     }
     
     /// Returns an optional dictionary of all variables and their values
