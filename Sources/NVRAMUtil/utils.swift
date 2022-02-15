@@ -70,12 +70,26 @@ struct deleteNVRAMVariable: ParsableCommand {
         commandName: "delete", abstract: "Deletes a specified NVRAM Variable"
     )
 
-    @Argument(help: "The NVRAM Variable to delete")
-    var variable: String
+    @Argument(help: "The NVRAM Variable[s] to delete")
+    var variable: String?
+    
+    @Flag(help: "Delete all NVRAM Variables")
+    var all: Bool = false
     
     func run() throws {
         let instance = NVRAM()
-        try instance.deleteVariable(variable)
-        print("Deleted variable \(variable)")
+        if let variable = variable {
+            try instance.deleteVariable(variable)
+        }
+        
+        if all {
+            guard let dict = try instance.GetAllVariables() else {
+                throw CleanExit.message("Unable to get all NVRAM Variables in order to delete them")
+            }
+            
+            for (key, _) in dict {
+                try instance.deleteVariable(key)
+            }
+        }
     }
 }
