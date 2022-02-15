@@ -3,6 +3,8 @@ import ArgumentParser
 import NVRAMKit
 import Foundation
 
+let instance = NVRAM()
+
 /// The subcommand for getting the value(s) of NVRAM Variables
 struct getValue: ParsableCommand {
     static var configuration: CommandConfiguration = CommandConfiguration(
@@ -19,7 +21,6 @@ struct getValue: ParsableCommand {
     var listAll: Bool = false
     
     func run() throws {
-        let instance = NVRAM()
         for variable in variables {
             let value = try instance.GetVariable(name: variable)
             print("\(variable): \(value ?? "Value not available")")
@@ -46,7 +47,7 @@ struct getValue: ParsableCommand {
 }
 
 /// The subcommand to set the value of an NVRAM Variable
-struct setNVRAMValue: ParsableCommand {
+struct setValue: ParsableCommand {
     static var configuration: CommandConfiguration = CommandConfiguration(
         commandName: "set", abstract: "Sets the value of a specified NVRAM variable"
     )
@@ -58,27 +59,25 @@ struct setNVRAMValue: ParsableCommand {
     var value: String
     
     func run() throws {
-        let instance = NVRAM()
         try instance.SetValue(forVariable: variable, toValue: value)
         print("Set value of variable \(variable) to \(value)")
     }
 }
 
-/// The subcommand for deleting an NVRAM Variable
+/// The subcommand for deleting NVRAM Variable(s)
 struct deleteNVRAMVariable: ParsableCommand {
     static var configuration: CommandConfiguration = CommandConfiguration(
-        commandName: "delete", abstract: "Deletes a specified NVRAM Variable"
+        commandName: "delete", abstract: "Deletes specified NVRAM Variable(s), or all"
     )
 
     @Argument(help: "The NVRAM Variable[s] to delete")
-    var variable: String?
+    var variables: [String] = []
     
     @Flag(help: "Delete all NVRAM Variables")
     var all: Bool = false
     
     func run() throws {
-        let instance = NVRAM()
-        if let variable = variable {
+        for variable in variables {
             try instance.deleteVariable(variable)
         }
         
@@ -87,8 +86,40 @@ struct deleteNVRAMVariable: ParsableCommand {
                 throw CleanExit.message("Unable to get all NVRAM Variables in order to delete them")
             }
             
-            for (key, _) in dict {
+            for key in dict.keys {
                 try instance.deleteVariable(key)
+            }
+        }
+    }
+}
+
+/// The subcommand for syncing NVRAM Variable(s)
+struct syncNVRAMVariable: ParsableCommand {
+    static var configuration: CommandConfiguration = CommandConfiguration(
+        commandName: "sync", abstract: "Syncs specified NVRAM Variable(s), or all"
+    )
+    
+    @Argument(help: "The NVRAM Variable(s) to sync")
+    var variables: [String] = []
+    
+    @Flag(help: "Sync all the variables")
+    var all: Bool = false
+    
+    @Flag(help: "Force Sync the NVRAM Variables (not recommended!)")
+    var forceSync: Bool = false
+    
+    func run() throws {
+        for variable in variables {
+            try instance.syncVariable(variable, forceSync: forceSync)
+        }
+    
+        if all {
+            guard let dict = try instance.GetAllVariables() else {
+                throw CleanExit.message("Unable to get all NVRAM Variables to sync")
+            }
+            
+            for key in dict.keys {
+                try instance.syncVariable(key, forceSync: forceSync)
             }
         }
     }
