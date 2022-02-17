@@ -41,7 +41,7 @@ public class NVRAM {
     }
     
     /// Initializes a new NVRAM instance with the defualt RegistryEntry for NVRAM Variables
-    public init() {
+    public init(RegistryEntryPath path: String = "IODeviceTree:/options") {
         var MasterPort: mach_port_t
         
         // macOS 12.0+ prefer kIOMainPortDefault to kIOMasterPortDefault
@@ -52,7 +52,7 @@ public class NVRAM {
             MasterPort = kIOMasterPortDefault
         }
         
-        self.RegistryEntry = IORegistryEntryFromPath(MasterPort, "IODeviceTree:/options")
+        self.RegistryEntry = IORegistryEntryFromPath(MasterPort, path)
     }
     
     /// Returns a Boolean based on whether or not an NVRAM Variable exists.
