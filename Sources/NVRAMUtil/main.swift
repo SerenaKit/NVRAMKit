@@ -1,6 +1,4 @@
 import ArgumentParser
-import NVRAMKit
-import IOKit
 
 struct NVRAMUtil: ParsableCommand {
     static var configuration: CommandConfiguration = CommandConfiguration(
